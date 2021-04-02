@@ -1,0 +1,22 @@
+{
+  "name": "nftchain",
+  "version": "1.0.0",
+  "description": "NFTChain Smart Contract",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NFTChain/NFTChain.git"
+  },
+  "author": "NFTChain owner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NFTChain/NFTChain/issues"
+  },
+  "homepage": "https://github.com/NFTChain/NFTChain#readme"
+}
