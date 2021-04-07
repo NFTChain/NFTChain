@@ -1,5 +1,6 @@
 const { ethers } = require("hardhat");
 const { utils } = require("ethers");
+const fs = require("fs");
 
 const main = async () => {
   const [deployer] = await ethers.getSigners();
@@ -11,6 +12,12 @@ const main = async () => {
   const Token = await ethers.getContractFactory("SimpleCollectible");
   const token = await Token.deploy([utils.id("T"), utils.id("Tasd")]);
   console.log(`Token address: ${token.address}`);
+
+  const data = {
+    address: token.address,
+    abi: JSON.parse(token.interface.format("json")),
+  };
+  fs.writeFileSync("client/src/SimpleCollectible.js", JSON.stringify(data));
 };
 
 main()
