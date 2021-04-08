@@ -10,14 +10,14 @@ const main = async () => {
   console.log(`Account balance: ${balance.toString()}`);
 
   const Token = await ethers.getContractFactory("SimpleCollectible");
-  const token = await Token.deploy([utils.id("T"), utils.id("Tasd")]);
+  const token = await Token.deploy([utils.id("T"), utils.id("Ta")]);
   console.log(`Token address: ${token.address}`);
 
   const data = {
     address: token.address,
     abi: JSON.parse(token.interface.format("json")),
   };
-  fs.writeFileSync("client/src/SimpleCollectible.js", JSON.stringify(data));
+  fs.writeFileSync("client/src/SimpleCollectible.json", JSON.stringify(data));
 };
 
 main()

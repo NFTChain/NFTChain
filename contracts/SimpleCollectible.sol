@@ -1,4 +1,4 @@
-pragma solidity 0.6.7;
+pragma solidity >=0.6.0 <0.7.0;
 //SPDX-License-Identifier: MIT
 
 //import "hardhat/console.sol";
