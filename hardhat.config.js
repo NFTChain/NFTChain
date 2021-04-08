@@ -4,6 +4,10 @@
 require("dotenv").config();
 require("@nomiclabs/hardhat-waffle");
 
+const NETWORK_URL = process.env.NETWORK_URL;
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+
 module.exports = {
   solidity: {
     compilers: [
@@ -29,7 +33,7 @@ module.exports = {
   },
   networks: {
     rinkeby: {
-      url: INFURA_URL,
+      url: NETWORK_URL,
       accounts: [`0x${PRIVATE_KEY}`],
     },
   },
