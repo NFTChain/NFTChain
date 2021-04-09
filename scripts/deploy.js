@@ -1,5 +1,5 @@
 const { ethers } = require("hardhat");
-const { utils } = require("ethers");
+// const { utils } = require("ethers"); // for buyer mints
 const fs = require("fs");
 
 const main = async () => {
@@ -10,7 +10,7 @@ const main = async () => {
   console.log(`Account balance: ${balance.toString()}`);
 
   const Token = await ethers.getContractFactory("SimpleCollectible");
-  const token = await Token.deploy([utils.id("T"), utils.id("Ta")]);
+  const token = await Token.deploy(); // for buyer mints => [utils.id("T787872371871381237"), utils.id("12398129dhdö")]
   console.log(`Token address: ${token.address}`);
 
   const data = {

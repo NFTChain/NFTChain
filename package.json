@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "truffle test"
+    "run-local-blockchain": "npx hardhat node",
+    "deploy-smart-contract": "npx hardhat run scripts/deploy.js --network localhost"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,7 @@
   },
   "homepage": "https://github.com/NFTChain/NFTChain#readme",
   "dependencies": {
-    "@openzeppelin/contracts": "^3.2.0",
+    "@openzeppelin/contracts": "^4.0.0",
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
