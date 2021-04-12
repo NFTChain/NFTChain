@@ -9,7 +9,7 @@ const main = async () => {
   const balance = await deployer.getBalance();
   console.log(`Account balance: ${balance.toString()}`);
 
-  const Token = await ethers.getContractFactory("SimpleCollectible");
+  const Token = await ethers.getContractFactory("NFTINK");
   const token = await Token.deploy(); // for buyer mints => [utils.id("T787872371871381237"), utils.id("12398129dhdö")]
   console.log(`Token address: ${token.address}`);
 
@@ -17,7 +17,7 @@ const main = async () => {
     address: token.address,
     abi: JSON.parse(token.interface.format("json")),
   };
-  fs.writeFileSync("client/src/SimpleCollectible.json", JSON.stringify(data));
+  fs.writeFileSync("client/src/NFTINK.json", JSON.stringify(data));
 };
 
 main()
