@@ -328,11 +328,11 @@
       ]
     },
     "/Users/relive/Desktop/NFTChain/NFTChain/contracts/NFTC.sol": {
-      "lastModificationDate": 1617990079912,
-      "contentHash": "13e596ee9756810e5221883b805f0cfb",
+      "lastModificationDate": 1618255603286,
+      "contentHash": "e4c69cf18d4a9a601a22d87902dca44d",
       "sourceName": "contracts/NFTC.sol",
       "solcConfig": {
-        "version": "0.7.6",
+        "version": "0.8.2",
         "settings": {
           "optimizer": {
             "enabled": true,
@@ -354,15 +354,19 @@
         }
       },
       "imports": [],
-      "versionPragmas": [],
-      "artifacts": []
+      "versionPragmas": [
+        "^0.8.2"
+      ],
+      "artifacts": [
+        "NFTC"
+      ]
     },
     "/Users/relive/Desktop/NFTChain/NFTChain/contracts/NFTG.sol": {
-      "lastModificationDate": 1617990072023,
-      "contentHash": "35c653b0f33da9c87d45a6c1107a60fe",
+      "lastModificationDate": 1618222479327,
+      "contentHash": "349ba53d9c98221719e714108ec39fb9",
       "sourceName": "contracts/NFTG.sol",
       "solcConfig": {
-        "version": "0.7.6",
+        "version": "0.8.2",
         "settings": {
           "optimizer": {
             "enabled": true,
@@ -388,11 +392,11 @@
       "artifacts": []
     },
     "/Users/relive/Desktop/NFTChain/NFTChain/contracts/NFTINK.sol": {
-      "lastModificationDate": 1618062971077,
-      "contentHash": "6f84a1610ddbb81a28ef7a4bee7e4502",
+      "lastModificationDate": 1618255878394,
+      "contentHash": "8f4c5a4af4676e42eebe77d3a95cf618",
       "sourceName": "contracts/NFTINK.sol",
       "solcConfig": {
-        "version": "0.6.7",
+        "version": "0.8.2",
         "settings": {
           "optimizer": {
             "enabled": true,
@@ -413,16 +417,9 @@
           }
         }
       },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
-        "@openzeppelin/contracts/utils/Counters.sol"
-      ],
-      "versionPragmas": [
-        ">=0.6.0 <0.7.0"
-      ],
-      "artifacts": [
-        "NFTINK"
-      ]
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
     },
     "/Users/relive/Desktop/NFTChain/NFTChain/node_modules/@openzeppelin/contracts/math/SafeMath.sol": {
       "lastModificationDate": 1618063075025,
