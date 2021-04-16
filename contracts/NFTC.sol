@@ -1,4 +1,4 @@
-pragma solidity ^0.8.2;
+pragma solidity ^0.6.0;
 
 contract NFTC {
     mapping(address => uint) public balances;
