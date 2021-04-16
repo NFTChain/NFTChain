@@ -328,8 +328,8 @@
       ]
     },
     "/Users/relive/Desktop/NFTChain/NFTChain/contracts/NFTC.sol": {
-      "lastModificationDate": 1618255603286,
-      "contentHash": "e4c69cf18d4a9a601a22d87902dca44d",
+      "lastModificationDate": 1618504454507,
+      "contentHash": "72c31a1802726234f800dfe9ad5b6e64",
       "sourceName": "contracts/NFTC.sol",
       "solcConfig": {
         "version": "0.8.2",

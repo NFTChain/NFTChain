@@ -14,7 +14,7 @@ const MNEMONIC = process.env.MNEMONIC;
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
-txask("accounts", "Prints the list of accounts", async () => {
+task("accounts", "Prints the list of accounts", async () => {
   const accounts = await ethers.getSigners();
 
   for (const account of accounts) {
@@ -45,7 +45,7 @@ module.exports = {
       //   },
       // },
       {
-        version: "0.6.12",
+        version: "0.8.2",
         settings: {
           optimizer: {
             enabled: true,
