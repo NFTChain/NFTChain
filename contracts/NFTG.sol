@@ -5,8 +5,9 @@
 
 
 // This should be the governance token
-// the idea is to have give this token as a staking reward from our main token
-// the user should be able to vote with token on future changes of the protocol
+// the idea is to give this token as a staking reward from our main token
+// the user should be able to vote with this token on future changes of the protocol
+// or on NFT's 
 
 // contract NFTGToken is ERC20 {
 //     constructor(uint256 initialSupply) public ERC20("NFTGovernance", "NFTG") {
