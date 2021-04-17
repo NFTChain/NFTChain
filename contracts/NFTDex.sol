@@ -4,7 +4,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
-
 /**
  * @title Classifieds
  * @notice Implements the classifieds board market. The market will be governed
@@ -30,9 +29,8 @@ contract NFTDex {
 
     uint256 tradeCounter;
 
-    constructor (address _currencyTokenAddress, address _itemTokenAddress)
+    constructor(address _currencyTokenAddress, address _itemTokenAddress)
         public
-        virtual
     {
         currencyToken = IERC20(_currencyTokenAddress);
         itemToken = IERC721(_itemTokenAddress);
@@ -47,7 +45,12 @@ contract NFTDex {
         public
         virtual
         view
-        returns(address, uint256, uint256, bytes32)
+        returns (
+            address,
+            uint256,
+            uint256,
+            bytes32
+        )
     {
         Trade memory trade = trades[_trade];
         return (trade.poster, trade.item, trade.price, trade.status);
@@ -58,10 +61,7 @@ contract NFTDex {
      * @param _item The id for the item to trade.
      * @param _price The amount of currency for which to trade the item.
      */
-    function openTrade(uint256 _item, uint256 _price)
-        public
-        virtual
-    {
+    function openTrade(uint256 _item, uint256 _price) public virtual {
         itemToken.transferFrom(msg.sender, address(this), _item);
         trades[tradeCounter] = Trade({
             poster: msg.sender,
@@ -79,10 +79,7 @@ contract NFTDex {
      * item to the filler.
      * @param _trade The id of an existing trade
      */
-    function executeTrade(uint256 _trade)
-        public
-        virtual
-    {
+    function executeTrade(uint256 _trade) public virtual {
         Trade memory trade = trades[_trade];
         require(trade.status == "Open", "Trade is not Open.");
         currencyToken.transferFrom(msg.sender, trade.poster, trade.price);
@@ -95,10 +92,7 @@ contract NFTDex {
      * @dev Cancels a trade by the poster.
      * @param _trade The trade to be cancelled.
      */
-    function cancelTrade(uint256 _trade)
-        public
-        virtual
-    {
+    function cancelTrade(uint256 _trade) public virtual {
         Trade memory trade = trades[_trade];
         require(
             msg.sender == trade.poster,
