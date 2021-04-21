@@ -21,7 +21,7 @@ const main = async () => {
 
   // deploy BEP721 Token
   const BEP721Contract = await ethers.getContractFactory("NftChainBEP721");
-  const BEP721Token = await BEP721Contract.deploy();
+  const BEP721Token = await BEP721Contract.deploy(BEP20Data.address); // add BEP20 token as main currency
   console.log(`Token address: ${BEP721Token.address}`);
   const BEP721Data = {
     address: BEP721Token.address,
@@ -30,22 +30,6 @@ const main = async () => {
   fs.writeFileSync(
     "client/src/NftChainBEP721.json",
     JSON.stringify(BEP721Data)
-  );
-
-  // deploy NFT exchange
-  const exchangeContract = await ethers.getContractFactory("NftDex");
-  const deployedExchangeContract = await exchangeContract.deploy(
-    BEP20Data.address,
-    BEP721Data.address
-  );
-  console.log(`Token address: ${deployedExchangeContract.address}`);
-  const exchangeContractData = {
-    address: deployedExchangeContract.address,
-    abi: JSON.parse(deployedExchangeContract.interface.format("json")),
-  };
-  fs.writeFileSync(
-    "client/src/NftDex.json",
-    JSON.stringify(exchangeContractData)
   );
 };
 
