@@ -1,6 +1,5 @@
 pragma solidity ^0.7.3;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
@@ -29,11 +28,11 @@ contract NftDex {
 
     uint256 tradeCounter;
 
-    constructor(address _currencyTokenAddress, address _itemTokenAddress)
+    constructor(IERC20 _currencyTokenAddress, IERC721 _itemTokenAddress)
         public
     {
-        currencyToken = IERC20(_currencyTokenAddress);
-        itemToken = IERC721(_itemTokenAddress);
+        currencyToken = _currencyTokenAddress;
+        itemToken = _itemTokenAddress;
         tradeCounter = 0;
     }
 
