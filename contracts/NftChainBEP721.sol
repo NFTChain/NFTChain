@@ -50,7 +50,7 @@ contract NftChainBEP721 is ERC721, Ownable {
     mapping(address => EnumerableSet.UintSet) private _artistInks;
     mapping(uint256 => uint256) private _inkIdByTokenId;
 
-    mapping(uint256 => uint256) public tokenPrice;
+    mapping(uint256 => uint256) public tokenPriceByTokenId;
 
     function _createInk(
         string memory inkUrl,
@@ -98,7 +98,6 @@ contract NftChainBEP721 is ERC721, Ownable {
             jsonUrl,
             limit,
             msg.sender,
-            msg.sender
         );
 
         _mintInkToken(msg.sender, inkId, inkUrl, jsonUrl);
@@ -165,19 +164,31 @@ contract NftChainBEP721 is ERC721, Ownable {
 
     function buyInk(string memory inkUrl) public payable returns (uint256) {
         uint256 _inkId = _inkIdByUrl[inkUrl];
+        
         require(_inkId > 0, "this ink does not exist!");
+
         Ink storage _ink = _inkById[_inkId];
         require(
             _ink.count < _ink.limit || _ink.limit == 0,
             "this ink is over the limit!"
         );
-        require(_ink.price > 0, "this ink does not have a price set");
-        require(msg.value >= _ink.price, "Amount of Ether sent too small");
-        address buyer = msg.sender;
-        uint256 tokenId = _mintInkToken(buyer, _inkId, inkUrl, _ink.jsonUrl);
+
+        address _buyer = msg.sender;
+        address _seller = _ink.artist;
+        uint256 _price = _ink.price;
+
+        require(_price > 0, "this ink does not have a price set");
+        
+        uint256 allowance = currencyToken.allowance(_buyer, _seller);
+        require(allowance >= _price, "Check the token allowance"); // check if transaction is allowed, if not revert
+        
+        uint256 tokenId = _mintInkToken(_buyer, _inkId, inkUrl, _ink.jsonUrl);
         //Note: a pull mechanism would be safer here: https://docs.openzeppelin.com/contracts/2.x/api/payment#PullPayment
-        _ink.artist.transfer(msg.value);
-        emit boughtInk(tokenId, inkUrl, buyer, msg.value);
+        
+        currencyToken.transferFrom(_buyer, _seller, _price); // send BEP20 tokens to seller of the NFT
+
+
+        emit boughtInk(tokenId, inkUrl, _buyer, _price);
         return tokenId;
     }
 
@@ -191,31 +202,31 @@ contract NftChainBEP721 is ERC721, Ownable {
             "only the owner can set the price!"
         );
 
-        tokenPrice[_tokenId] = _price;
+        tokenPriceByTokenId[_tokenId] = _price;
 
         return _price;
     }
 
     function buyToken(uint256 _tokenId) public payable {
-        uint256 _price = tokenPrice[_tokenId];
+        uint256 _price = tokenPriceByTokenId[_tokenId];
 
         require(_price > 0, "this token is not for sale");
 
         address _buyer = msg.sender;
-        address payable _seller = address(uint160(ownerOf(_tokenId)));
+        address _seller = address(uint160(ownerOf(_tokenId)));
 
         uint256 allowance = currencyToken.allowance(_buyer, _seller);
-        require(allowance >= price, "Check the token allowance"); // check if transaction is allowed, if not revert
+        require(allowance >= _price, "Check the token allowance"); // check if transaction is allowed, if not revert
 
         _transfer(_seller, _buyer, _tokenId); // send BEP721 / NFT token to buyer
         //Note: a pull mechanism would be safer here: https://docs.openzeppelin.com/contracts/2.x/api/payment#PullPayment
 
-        currencyToken.transferFrom(_buyer, _seller, price); // send BEP20 tokens to seller of the NFT
+        currencyToken.transferFrom(_buyer, _seller, _price); // send BEP20 tokens to seller of the NFT
 
         Ink storage _ink = _inkById[_inkIdByTokenId[_tokenId]];
 
-        delete tokenPrice[_tokenId];
-        emit boughtInk(_tokenId, _ink.inkUrl, _buyer, price);
+        delete tokenPriceByTokenId[_tokenId];
+        emit boughtInk(_tokenId, _ink.inkUrl, _buyer, _price);
     }
 
     function inkTokenByIndex(string memory inkUrl, uint256 index)
@@ -238,7 +249,6 @@ contract NftChainBEP721 is ERC721, Ownable {
             address,
             uint256,
             string memory,
-            bytes memory,
             uint256
         )
     {
@@ -279,7 +289,6 @@ contract NftChainBEP721 is ERC721, Ownable {
             address,
             uint256,
             string memory,
-            bytes memory,
             uint256
         )
     {
