@@ -27,7 +27,8 @@ contract NftChainBEP721 is ERC721, Ownable {
         uint256 id,
         address indexed artist,
         string inkUrl,
-        uint256 limit
+        uint256 limit,
+        uint256 price
     );
     event mintedInk(uint256 id, string inkUrl, address to);
     event boughtInk(uint256 id, string inkUrl, address buyer, uint256 price);
@@ -53,7 +54,8 @@ contract NftChainBEP721 is ERC721, Ownable {
     function _createInk(
         string memory inkUrl,
         uint256 limit,
-        address payable artist
+        address payable artist,
+        uint256 price
     ) internal returns (uint256) {
         totalInks.increment();
 
@@ -64,27 +66,28 @@ contract NftChainBEP721 is ERC721, Ownable {
             limit: limit,
             count: 0,
             exists: true,
-            price: 0
+            price: price
         });
 
         _inkIdByUrl[inkUrl] = _ink.id;
         _inkById[_ink.id] = _ink;
         _artistInks[artist].add(_ink.id);
 
-        emit newInk(_ink.id, _ink.artist, _ink.inkUrl, _ink.limit);
+        emit newInk(_ink.id, _ink.artist, _ink.inkUrl, _ink.limit, _ink.price);
 
         return _ink.id;
     }
 
-    function createInk(string memory inkUrl, uint256 limit)
-        public
-        returns (uint256)
-    {
+    function createInk(
+        string memory inkUrl,
+        uint256 limit,
+        uint256 price
+    ) public returns (uint256) {
         require(!(_inkIdByUrl[inkUrl] > 0), "this ink already exists!");
 
-        uint256 inkId = _createInk(inkUrl, limit, msg.sender);
+        uint256 inkId = _createInk(inkUrl, limit, msg.sender, price);
 
-        _mintInkToken(msg.sender, inkId, inkUrl);
+        // _mintInkToken(msg.sender, inkId, inkUrl);
 
         return inkId;
     }
@@ -145,8 +148,6 @@ contract NftChainBEP721 is ERC721, Ownable {
         return price;
     }
 
-    // we probably can delete this function, it's only for unminted nfts
-    // another option would be to create functionality to create unminted nfts
     function buyInk(string memory inkUrl) public payable returns (uint256) {
         uint256 _inkId = _inkIdByUrl[inkUrl];
 
