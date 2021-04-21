@@ -2,6 +2,7 @@
 pragma solidity >=0.6.0 <0.7.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -12,14 +13,20 @@ contract NftChainBEP721 is ERC721, Ownable {
     Counters.Counter public totalInks;
     using SafeMath for uint256;
 
+    IERC20 currencyToken;
+
     uint256 artistTake;
 
     function setArtistTake(uint256 _take) public onlyOwner {
         artistTake = _take;
     }
 
-    constructor() public ERC721("NFTChainArt", "NFTCA") {
+    constructor(IERC20 _currencyTokenAddress)
+        public
+        ERC721("NFTChainArt", "NFTCA")
+    {
         _setBaseURI("ipfs://ipfs/");
+        currencyToken = _currencyTokenAddress;
         setArtistTake(1);
     }
 
