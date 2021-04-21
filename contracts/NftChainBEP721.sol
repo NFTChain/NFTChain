@@ -36,7 +36,6 @@ contract NftChainBEP721 is ERC721, Ownable {
     struct Ink {
         uint256 id;
         address payable artist;
-        address patron;
         string jsonUrl;
         string inkUrl;
         uint256 limit;
@@ -59,14 +58,12 @@ contract NftChainBEP721 is ERC721, Ownable {
         string memory jsonUrl,
         uint256 limit,
         address payable artist,
-        address patron
     ) internal returns (uint256) {
         totalInks.increment();
 
         Ink memory _ink = Ink({
             id: totalInks.current(),
             artist: artist,
-            patron: patron,
             inkUrl: inkUrl,
             jsonUrl: jsonUrl,
             limit: limit,
