@@ -27,7 +27,6 @@ contract NftChainBEP721 is ERC721, Ownable {
         uint256 id,
         address indexed artist,
         string inkUrl,
-        string jsonUrl,
         uint256 limit
     );
     event mintedInk(uint256 id, string inkUrl, address to);
@@ -36,7 +35,6 @@ contract NftChainBEP721 is ERC721, Ownable {
     struct Ink {
         uint256 id;
         address payable artist;
-        string jsonUrl;
         string inkUrl;
         uint256 limit;
         uint256 count;
@@ -54,7 +52,6 @@ contract NftChainBEP721 is ERC721, Ownable {
 
     function _createInk(
         string memory inkUrl,
-        string memory jsonUrl,
         uint256 limit,
         address payable artist,
     ) internal returns (uint256) {
@@ -64,7 +61,6 @@ contract NftChainBEP721 is ERC721, Ownable {
             id: totalInks.current(),
             artist: artist,
             inkUrl: inkUrl,
-            jsonUrl: jsonUrl,
             limit: limit,
             count: 0,
             exists: true,
@@ -79,7 +75,6 @@ contract NftChainBEP721 is ERC721, Ownable {
             _ink.id,
             _ink.artist,
             _ink.inkUrl,
-            _ink.jsonUrl,
             _ink.limit
         );
 
@@ -88,19 +83,17 @@ contract NftChainBEP721 is ERC721, Ownable {
 
     function createInk(
         string memory inkUrl,
-        string memory jsonUrl,
         uint256 limit
     ) public returns (uint256) {
         require(!(_inkIdByUrl[inkUrl] > 0), "this ink already exists!");
 
         uint256 inkId = _createInk(
             inkUrl,
-            jsonUrl,
             limit,
             msg.sender,
         );
 
-        _mintInkToken(msg.sender, inkId, inkUrl, jsonUrl);
+        _mintInkToken(msg.sender, inkId, inkUrl);
 
         return inkId;
     }
@@ -109,7 +102,6 @@ contract NftChainBEP721 is ERC721, Ownable {
         address to,
         uint256 inkId,
         string memory inkUrl,
-        string memory jsonUrl
     ) internal returns (uint256) {
         _inkById[inkId].count += 1;
 
@@ -119,7 +111,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         _inkIdByTokenId[id] = inkId;
 
         _mint(to, id);
-        _setTokenURI(id, jsonUrl);
+        _setTokenURI(id, inkUrl);
 
         emit mintedInk(id, inkUrl, to);
 
@@ -136,7 +128,7 @@ contract NftChainBEP721 is ERC721, Ownable {
             "this ink is over the limit!"
         );
 
-        uint256 tokenId = _mintInkToken(to, _inkId, _ink.inkUrl, _ink.jsonUrl);
+        uint256 tokenId = _mintInkToken(to, _inkId, _ink.inkUrl);
 
         return tokenId;
     }
@@ -182,7 +174,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         uint256 allowance = currencyToken.allowance(_buyer, _seller);
         require(allowance >= _price, "Check the token allowance"); // check if transaction is allowed, if not revert
         
-        uint256 tokenId = _mintInkToken(_buyer, _inkId, inkUrl, _ink.jsonUrl);
+        uint256 tokenId = _mintInkToken(_buyer, _inkId, inkUrl);
         //Note: a pull mechanism would be safer here: https://docs.openzeppelin.com/contracts/2.x/api/payment#PullPayment
         
         currencyToken.transferFrom(_buyer, _seller, _price); // send BEP20 tokens to seller of the NFT
@@ -248,7 +240,6 @@ contract NftChainBEP721 is ERC721, Ownable {
             uint256,
             address,
             uint256,
-            string memory,
             uint256
         )
     {
@@ -260,7 +251,6 @@ contract NftChainBEP721 is ERC721, Ownable {
             _inkId,
             _ink.artist,
             _ink.count,
-            _ink.jsonUrl,
             _ink.price
         );
     }
@@ -285,7 +275,6 @@ contract NftChainBEP721 is ERC721, Ownable {
         public
         view
         returns (
-            string memory,
             address,
             uint256,
             string memory,
@@ -296,7 +285,6 @@ contract NftChainBEP721 is ERC721, Ownable {
         Ink storage _ink = _inkById[id];
 
         return (
-            _ink.jsonUrl,
             _ink.artist,
             _ink.count,
             _ink.inkUrl,
