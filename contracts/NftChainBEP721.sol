@@ -15,19 +15,12 @@ contract NftChainBEP721 is ERC721, Ownable {
 
     IERC20 currencyToken;
 
-    uint256 artistTake;
-
-    function setArtistTake(uint256 _take) public onlyOwner {
-        artistTake = _take;
-    }
-
     constructor(IERC20 _currencyTokenAddress)
         public
         ERC721("NFTChainArt", "NFTCA")
     {
         _setBaseURI("ipfs://ipfs/");
         currencyToken = _currencyTokenAddress;
-        setArtistTake(1);
     }
 
     event newInk(
@@ -108,11 +101,11 @@ contract NftChainBEP721 is ERC721, Ownable {
             inkUrl,
             jsonUrl,
             limit,
-            _msgSender(),
-            _msgSender()
+            msg.sender,
+            msg.sender
         );
 
-        _mintInkToken(_msgSender(), inkId, inkUrl, jsonUrl);
+        _mintInkToken(msg.sender, inkId, inkUrl, jsonUrl);
 
         return inkId;
     }
@@ -142,7 +135,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         uint256 _inkId = _inkIdByUrl[inkUrl];
         require(_inkId > 0, "this ink does not exist!");
         Ink storage _ink = _inkById[_inkId];
-        require(_ink.artist == _msgSender(), "only the artist can mint!");
+        require(_ink.artist == msg.sender, "only the artist can mint!");
         require(
             _ink.count < _ink.limit || _ink.limit == 0,
             "this ink is over the limit!"
@@ -161,7 +154,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         require(_inkId > 0, "this ink does not exist!");
         Ink storage _ink = _inkById[_inkId];
         require(
-            _ink.artist == _msgSender(),
+            _ink.artist == msg.sender,
             "only the artist can set the price!"
         );
         require(
@@ -184,7 +177,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         );
         require(_ink.price > 0, "this ink does not have a price set");
         require(msg.value >= _ink.price, "Amount of Ether sent too small");
-        address buyer = _msgSender();
+        address buyer = msg.sender;
         uint256 tokenId = _mintInkToken(buyer, _inkId, inkUrl, _ink.jsonUrl);
         //Note: a pull mechanism would be safer here: https://docs.openzeppelin.com/contracts/2.x/api/payment#PullPayment
         _ink.artist.transfer(msg.value);
@@ -198,7 +191,7 @@ contract NftChainBEP721 is ERC721, Ownable {
     {
         require(_exists(_tokenId), "this token does not exist!");
         require(
-            ownerOf(_tokenId) == _msgSender(),
+            ownerOf(_tokenId) == msg.sender,
             "only the owner can set the price!"
         );
 
@@ -209,22 +202,24 @@ contract NftChainBEP721 is ERC721, Ownable {
 
     function buyToken(uint256 _tokenId) public payable {
         uint256 _price = tokenPrice[_tokenId];
+
         require(_price > 0, "this token is not for sale");
-        require(msg.value >= _price, "Amount of Ether sent too small");
-        address _buyer = _msgSender();
+
+        address _buyer = msg.sender;
         address payable _seller = address(uint160(ownerOf(_tokenId)));
-        _transfer(_seller, _buyer, _tokenId);
+
+        uint256 allowance = currencyToken.allowance(_buyer, _seller);
+        require(allowance >= price, "Check the token allowance"); // check if transaction is allowed, if not revert
+
+        _transfer(_seller, _buyer, _tokenId); // send BEP721 / NFT token to buyer
         //Note: a pull mechanism would be safer here: https://docs.openzeppelin.com/contracts/2.x/api/payment#PullPayment
 
-        uint256 _artistTake = artistTake.mul(msg.value).div(100);
-        uint256 _sellerTake = msg.value.sub(_artistTake);
+        currencyToken.transferFrom(_buyer, _seller, price); // send BEP20 tokens to seller of the NFT
 
         Ink storage _ink = _inkById[_inkIdByTokenId[_tokenId]];
 
-        _ink.artist.transfer(_artistTake);
-        _seller.transfer(_sellerTake);
         delete tokenPrice[_tokenId];
-        emit boughtInk(_tokenId, _ink.inkUrl, _buyer, msg.value);
+        emit boughtInk(_tokenId, _ink.inkUrl, _buyer, price);
     }
 
     function inkTokenByIndex(string memory inkUrl, uint256 index)
