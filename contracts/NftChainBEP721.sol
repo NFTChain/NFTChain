@@ -48,7 +48,6 @@ contract NftChainBEP721 is ERC721, Ownable {
     mapping(uint256 => Ink) private _inkById;
     mapping(string => EnumerableSet.UintSet) private _inkTokens;
     mapping(address => EnumerableSet.UintSet) private _artistInks;
-    mapping(string => bytes) private _inkSignatureByUrl;
     mapping(uint256 => uint256) private _inkIdByTokenId;
 
     mapping(uint256 => uint256) public tokenPrice;
@@ -246,14 +245,12 @@ contract NftChainBEP721 is ERC721, Ownable {
         uint256 _inkId = _inkIdByUrl[inkUrl];
         require(_inkId > 0, "this ink does not exist!");
         Ink storage _ink = _inkById[_inkId];
-        bytes memory signature = _inkSignatureByUrl[inkUrl];
 
         return (
             _inkId,
             _ink.artist,
             _ink.count,
             _ink.jsonUrl,
-            signature,
             _ink.price
         );
     }
@@ -288,14 +285,12 @@ contract NftChainBEP721 is ERC721, Ownable {
     {
         require(_inkById[id].exists, "this ink does not exist!");
         Ink storage _ink = _inkById[id];
-        bytes memory signature = _inkSignatureByUrl[_ink.inkUrl];
 
         return (
             _ink.jsonUrl,
             _ink.artist,
             _ink.count,
             _ink.inkUrl,
-            signature,
             _ink.price
         );
     }
