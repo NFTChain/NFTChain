@@ -145,6 +145,8 @@ contract NftChainBEP721 is ERC721, Ownable {
         return price;
     }
 
+    // we probably can delete this function, it's only for unminted nfts
+    // another option would be to create functionality to create unminted nfts
     function buyInk(string memory inkUrl) public payable returns (uint256) {
         uint256 _inkId = _inkIdByUrl[inkUrl];
 
