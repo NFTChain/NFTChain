@@ -272,12 +272,13 @@ contract NftChainBEP721 is ERC721, Ownable {
             address,
             uint256,
             string memory,
+            uint256,
             uint256
         )
     {
         require(_inkById[id].exists, "this ink does not exist!");
         Ink storage _ink = _inkById[id];
 
-        return (_ink.artist, _ink.count, _ink.inkUrl, _ink.price);
+        return (_ink.artist, _ink.count, _ink.inkUrl, _ink.price, _ink.limit);
     }
 }
