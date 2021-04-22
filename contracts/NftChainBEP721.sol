@@ -32,13 +32,6 @@ contract NftChainBEP721 is ERC721, Ownable {
     );
     event mintedInk(uint256 id, string inkUrl, address to);
     event boughtInk(uint256 id, string inkUrl, address buyer, uint256 price);
-    event newInk(
-        uint256 id,
-        address artist,
-        string inkUrl,
-        uint256 limit,
-        uint256 price
-    );
 
     struct Ink {
         uint256 id;
@@ -118,7 +111,7 @@ contract NftChainBEP721 is ERC721, Ownable {
 
         return id;
     }
-    
+
     // mint function gives artist allowance to mint NFT itself
     function mint(address to, string memory inkUrl) public returns (uint256) {
         uint256 _inkId = _inkIdByUrl[inkUrl];
@@ -134,7 +127,7 @@ contract NftChainBEP721 is ERC721, Ownable {
 
         return tokenId;
     }
-    
+
     // sets the price of a unminted NFT
     function setPrice(string memory inkUrl, uint256 price)
         public
@@ -187,7 +180,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         return tokenId;
     }
 
-     // sets the price of minted NFT
+    // sets the price of minted NFT
     function setTokenPrice(uint256 _tokenId, uint256 _price)
         public
         returns (uint256)
@@ -203,7 +196,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         return _price;
     }
 
-     // buy function for already minted NFT
+    // buy function for already minted NFT
     function buyToken(uint256 _tokenId) public payable {
         uint256 _price = tokenPriceByTokenId[_tokenId];
 
