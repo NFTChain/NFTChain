@@ -238,6 +238,7 @@ contract NftChainBEP721 is ERC721, Ownable {
             uint256,
             address,
             uint256,
+            uint256,
             uint256
         )
     {
@@ -245,7 +246,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         require(_inkId > 0, "this ink does not exist!");
         Ink storage _ink = _inkById[_inkId];
 
-        return (_inkId, _ink.artist, _ink.count, _ink.price);
+        return (_inkId, _ink.artist, _ink.count, _ink.price, _ink.limit);
     }
 
     function inkIdByUrl(string memory inkUrl) public view returns (uint256) {
