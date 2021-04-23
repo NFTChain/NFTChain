@@ -168,7 +168,7 @@ contract NftChainBEP721 is ERC721, Ownable {
 
         require(_price > 0, "this ink does not have a price set");
 
-        uint256 allowance = currencyToken.allowance(_buyer, _seller);
+        uint256 allowance = currencyToken.allowance(_buyer, address(this));
         require(allowance >= _price, "Check the token allowance"); // check if transaction is allowed, if not revert
 
         uint256 tokenId = _mintInkToken(_buyer, _inkId, inkUrl);
@@ -205,7 +205,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         address _buyer = msg.sender;
         address _seller = address(uint160(ownerOf(_tokenId)));
 
-        uint256 allowance = currencyToken.allowance(_buyer, _seller);
+        uint256 allowance = currencyToken.allowance(_buyer, address(this));
         require(allowance >= _price, "Check the token allowance"); // check if transaction is allowed, if not revert
 
         _transfer(_seller, _buyer, _tokenId); // send BEP721 / NFT token to buyer
