@@ -33,6 +33,7 @@ describe("BEP721 contract", async () => {
     });
   });
 
+  // need to update the tests with parsing the price (18 decimals)
   describe("Buy inks and tokens", () => {
     it("Should buy 1 ink and 1 token", async () => {
       // create 1 ink for addr1
@@ -97,7 +98,6 @@ describe("BEP721 contract", async () => {
       const ownerOfToken = await BEP721Token.ownerOf(firstMintedTokenId);
       expect(ownerOfToken).to.equal(addr1.address);
 
-      // check if owner got the NFTC tokens // problems with bigNumber substraction
       //   const balanceOfOwner = await BEP20Token.balanceOf(owner.address);
       //   expect(balanceOfOwner).to.equal(initialBalanceOfOwner - 950); // 950 = bought for 1000 and sold for 50
 

@@ -19,7 +19,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         public
         ERC721("NFTChainArt", "NFTCA")
     {
-        _setBaseURI("ipfs://ipfs/");
+        _setBaseURI("https://ipfs.io/ipfs/");
         currencyToken = _currencyTokenAddress;
     }
 
