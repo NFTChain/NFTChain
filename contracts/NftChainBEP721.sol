@@ -7,6 +7,8 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+import "hardhat/console.sol";
+
 contract NftChainBEP721 is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
