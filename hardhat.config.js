@@ -37,6 +37,11 @@ module.exports = {
       gasPrice: 20000000000,
       accounts: { mnemonic: mnemonic() },
     },
+    matic_testnet: {
+      url: "https://rpc-mumbai.maticvigil.com",
+      // chainId: 80001,
+      accounts: { mnemonic: mnemonic() },
+    },
   },
   solidity: {
     compilers: [
