@@ -49,7 +49,7 @@ describe("BEP721 contract", async () => {
       // approve BEP721 address transaction for owner
       const approveTransaction = await BEP20Token.approve(
         BEP721Token.address,
-        1000
+        inkPrice
       );
 
       // buy 1 ink for owner
