@@ -15,7 +15,10 @@ contract NftChainBEP721 is ERC721, Ownable {
     Counters.Counter public totalInks;
     using SafeMath for uint256;
 
-    IERC20 currencyToken;
+    IERC20 currencyToken; // our main currency which will be an ERC20 token called NFTC
+
+    uint256 public feeTake; // the fee percentage which covers the the costs of using Pinatas service
+    address payable feeAddress; // the address where we sent the fees to
 
     constructor(IERC20 _currencyTokenAddress)
         public
@@ -25,6 +28,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         currencyToken = _currencyTokenAddress;
     }
 
+    // events which are important for querying data with the graph
     event newInk(
         uint256 id,
         address indexed artist,
@@ -32,8 +36,10 @@ contract NftChainBEP721 is ERC721, Ownable {
         uint256 limit,
         uint256 price
     );
-    event mintedInk(uint256 id, string inkUrl, address to);
     event boughtInk(uint256 id, string inkUrl, address buyer, uint256 price);
+    event boughtToken(uint256 id, string inkUrl, address buyer, uint256 price);
+    event newInkPrice(uint256 id, uint256 price);
+    event newTokenPrice(uint256 id, uint256 price);
 
     struct Ink {
         uint256 id;
@@ -109,8 +115,6 @@ contract NftChainBEP721 is ERC721, Ownable {
         _mint(to, id);
         _setTokenURI(id, inkUrl);
 
-        emit mintedInk(id, inkUrl, to);
-
         return id;
     }
 
@@ -148,6 +152,8 @@ contract NftChainBEP721 is ERC721, Ownable {
         );
 
         _inkById[_inkId].price = price;
+
+        emit newInkPrice(inkUrl, price);
 
         return price;
     }
@@ -194,7 +200,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         );
 
         tokenPriceByTokenId[_tokenId] = _price;
-
+        emit newTokenPrice(_tokenId, _price);
         return _price;
     }
 
@@ -218,7 +224,20 @@ contract NftChainBEP721 is ERC721, Ownable {
         Ink storage _ink = _inkById[_inkIdByTokenId[_tokenId]];
 
         delete tokenPriceByTokenId[_tokenId];
-        emit boughtInk(_tokenId, _ink.inkUrl, _buyer, _price);
+        // emit boughtInk(_tokenId, _ink.inkUrl, _buyer, _price);
+        emit boughtToken(_tokenId, _ink.inkUrl, _buyer, _price);
+    }
+
+    function setFeeTake(uint256 _take) public onlyOwner {
+        // only owner can set percentage of fee
+        require(_take < 100, "take is more than 99 percent");
+        feeTake = _take;
+    }
+
+    function setFeeAddress(address payable devAddress) public onlyOwner {
+        // only owner can set fee address where the fees go to
+        require(devAddress == address(devAddress), "Invalid address");
+        feeAddress = devAddress;
     }
 
     function inkTokenByIndex(string memory inkUrl, uint256 index)
