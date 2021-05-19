@@ -182,7 +182,10 @@ contract NftChainBEP721 is ERC721, Ownable {
         uint256 tokenId = _mintInkToken(_buyer, _inkId, inkUrl);
         //Note: a pull mechanism would be safer here: https://docs.openzeppelin.com/contracts/2.x/api/payment#PullPayment
 
-        currencyToken.transferFrom(_buyer, _seller, _price); // send BEP20 tokens to seller of the NFT
+        uint256 _feeTake = feeTake.mul(msg.value).div(100);
+        uint256 _sellerTake = msg.value.sub(_feeTake);
+        currencyToken.transferFrom(_buyer, devAddress, _feeTake); // send BEP20 tokens as fee to dev address
+        currencyToken.transferFrom(_buyer, _seller, _sellerTake); // send BEP20 tokens to seller of the NFT
 
         emit boughtInk(tokenId, inkUrl, _buyer, _price);
         return tokenId;
@@ -219,7 +222,10 @@ contract NftChainBEP721 is ERC721, Ownable {
         _transfer(_seller, _buyer, _tokenId); // send BEP721 / NFT token to buyer
         //Note: a pull mechanism would be safer here: https://docs.openzeppelin.com/contracts/2.x/api/payment#PullPayment
 
-        currencyToken.transferFrom(_buyer, _seller, _price); // send BEP20 tokens to seller of the NFT
+        uint256 _feeTake = feeTake.mul(msg.value).div(100);
+        uint256 _sellerTake = msg.value.sub(_feeTake);
+        currencyToken.transferFrom(_buyer, devAddress, _feeTake); // send BEP20 tokens as fee to dev address
+        currencyToken.transferFrom(_buyer, _seller, _sellerTake); // send BEP20 tokens to seller of the NFT
 
         Ink storage _ink = _inkById[_inkIdByTokenId[_tokenId]];
 
