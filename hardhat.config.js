@@ -9,7 +9,9 @@ function mnemonic() {
     return fs.readFileSync("./mnemonic.txt").toString().trim();
   } catch (e) {
     if (defaultNetwork !== "localhost") {
-      console.log("☢️ WARNING: No mnemonic file created for a deploy account. Try `yarn run generate` and then `yarn run account`.")
+      console.log(
+        "☢️ WARNING: No mnemonic file created for a deploy account. Try `yarn run generate` and then `yarn run account`."
+      );
     }
   }
   return "";
@@ -19,7 +21,6 @@ function mnemonic() {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork,
   networks: {
     localhost: {
       url: "http://localhost:8545",
@@ -36,6 +37,11 @@ module.exports = {
       gasPrice: 20000000000,
       accounts: { mnemonic: mnemonic() },
     },
+    matic_testnet: {
+      url: "https://rpc-mumbai.maticvigil.com",
+      // chainId: 80001,
+      accounts: { mnemonic: mnemonic() },
+    },
   },
   solidity: {
     compilers: [
@@ -44,12 +50,12 @@ module.exports = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200
-          }
-        }
+            runs: 200,
+          },
+        },
       },
     ],
-  }
+  },
 };
 
 const DEBUG = false;

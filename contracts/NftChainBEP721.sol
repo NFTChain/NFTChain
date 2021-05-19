@@ -7,22 +7,30 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+import "hardhat/console.sol";
+
 contract NftChainBEP721 is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     Counters.Counter public totalInks;
     using SafeMath for uint256;
 
-    IERC20 currencyToken;
+    IERC20 currencyToken; // our main currency which will be an ERC20 token called NFTC
+
+    uint256 public feeTake; // the fee percentage which covers the the costs of using Pinatas service
+    address payable feeAddress; // the address where we sent the fees to
 
     constructor(IERC20 _currencyTokenAddress)
         public
         ERC721("NFTChainArt", "NFTCA")
     {
-        _setBaseURI("ipfs://ipfs/");
+        _setBaseURI("https://ipfs.io/ipfs/");
         currencyToken = _currencyTokenAddress;
+        setFeeTake(0); // lets have 0% fee for the start to be more attractive to users
+        setFeeAddress(msg.sender);
     }
 
+    // events which are important for querying data with the graph
     event newInk(
         uint256 id,
         address indexed artist,
@@ -30,8 +38,10 @@ contract NftChainBEP721 is ERC721, Ownable {
         uint256 limit,
         uint256 price
     );
-    event mintedInk(uint256 id, string inkUrl, address to);
     event boughtInk(uint256 id, string inkUrl, address buyer, uint256 price);
+    event boughtToken(uint256 id, string inkUrl, address buyer, uint256 price);
+    event newInkPrice(string inkUrl, uint256 price);
+    event newTokenPrice(uint256 id, uint256 price);
 
     struct Ink {
         uint256 id;
@@ -107,8 +117,6 @@ contract NftChainBEP721 is ERC721, Ownable {
         _mint(to, id);
         _setTokenURI(id, inkUrl);
 
-        emit mintedInk(id, inkUrl, to);
-
         return id;
     }
 
@@ -147,6 +155,8 @@ contract NftChainBEP721 is ERC721, Ownable {
 
         _inkById[_inkId].price = price;
 
+        emit newInkPrice(inkUrl, price);
+
         return price;
     }
 
@@ -174,7 +184,10 @@ contract NftChainBEP721 is ERC721, Ownable {
         uint256 tokenId = _mintInkToken(_buyer, _inkId, inkUrl);
         //Note: a pull mechanism would be safer here: https://docs.openzeppelin.com/contracts/2.x/api/payment#PullPayment
 
-        currencyToken.transferFrom(_buyer, _seller, _price); // send BEP20 tokens to seller of the NFT
+        uint256 _feeTake = feeTake.mul(_price).div(100);
+        uint256 _sellerTake = _price.sub(_feeTake);
+        currencyToken.transferFrom(_buyer, feeAddress, _feeTake); // send BEP20 tokens as fee to dev address
+        currencyToken.transferFrom(_buyer, _seller, _sellerTake); // send BEP20 tokens to seller of the NFT
 
         emit boughtInk(tokenId, inkUrl, _buyer, _price);
         return tokenId;
@@ -192,7 +205,7 @@ contract NftChainBEP721 is ERC721, Ownable {
         );
 
         tokenPriceByTokenId[_tokenId] = _price;
-
+        emit newTokenPrice(_tokenId, _price);
         return _price;
     }
 
@@ -211,12 +224,28 @@ contract NftChainBEP721 is ERC721, Ownable {
         _transfer(_seller, _buyer, _tokenId); // send BEP721 / NFT token to buyer
         //Note: a pull mechanism would be safer here: https://docs.openzeppelin.com/contracts/2.x/api/payment#PullPayment
 
-        currencyToken.transferFrom(_buyer, _seller, _price); // send BEP20 tokens to seller of the NFT
+        uint256 _feeTake = feeTake.mul(_price).div(100);
+        uint256 _sellerTake = _price.sub(_feeTake);
+        currencyToken.transferFrom(_buyer, feeAddress, _feeTake); // send BEP20 tokens as fee to dev address
+        currencyToken.transferFrom(_buyer, _seller, _sellerTake); // send BEP20 tokens to seller of the NFT
 
         Ink storage _ink = _inkById[_inkIdByTokenId[_tokenId]];
 
         delete tokenPriceByTokenId[_tokenId];
-        emit boughtInk(_tokenId, _ink.inkUrl, _buyer, _price);
+        // emit boughtInk(_tokenId, _ink.inkUrl, _buyer, _price);
+        emit boughtToken(_tokenId, _ink.inkUrl, _buyer, _price);
+    }
+
+    function setFeeTake(uint256 _take) public onlyOwner {
+        // only owner can set percentage of fee
+        require(_take < 100, "take is more than 99 percent");
+        feeTake = _take;
+    }
+
+    function setFeeAddress(address payable devAddress) public onlyOwner {
+        // only owner can set fee address where the fees go to
+        require(devAddress == address(devAddress), "Invalid address");
+        feeAddress = devAddress;
     }
 
     function inkTokenByIndex(string memory inkUrl, uint256 index)
