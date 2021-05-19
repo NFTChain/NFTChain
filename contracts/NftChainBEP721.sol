@@ -40,7 +40,7 @@ contract NftChainBEP721 is ERC721, Ownable {
     );
     event boughtInk(uint256 id, string inkUrl, address buyer, uint256 price);
     event boughtToken(uint256 id, string inkUrl, address buyer, uint256 price);
-    event newInkPrice(uint256 id, uint256 price);
+    event newInkPrice(string inkUrl, uint256 price);
     event newTokenPrice(uint256 id, uint256 price);
 
     struct Ink {
@@ -186,7 +186,7 @@ contract NftChainBEP721 is ERC721, Ownable {
 
         uint256 _feeTake = feeTake.mul(msg.value).div(100);
         uint256 _sellerTake = msg.value.sub(_feeTake);
-        currencyToken.transferFrom(_buyer, devAddress, _feeTake); // send BEP20 tokens as fee to dev address
+        currencyToken.transferFrom(_buyer, feeAddress, _feeTake); // send BEP20 tokens as fee to dev address
         currencyToken.transferFrom(_buyer, _seller, _sellerTake); // send BEP20 tokens to seller of the NFT
 
         emit boughtInk(tokenId, inkUrl, _buyer, _price);
@@ -226,7 +226,7 @@ contract NftChainBEP721 is ERC721, Ownable {
 
         uint256 _feeTake = feeTake.mul(msg.value).div(100);
         uint256 _sellerTake = msg.value.sub(_feeTake);
-        currencyToken.transferFrom(_buyer, devAddress, _feeTake); // send BEP20 tokens as fee to dev address
+        currencyToken.transferFrom(_buyer, feeAddress, _feeTake); // send BEP20 tokens as fee to dev address
         currencyToken.transferFrom(_buyer, _seller, _sellerTake); // send BEP20 tokens to seller of the NFT
 
         Ink storage _ink = _inkById[_inkIdByTokenId[_tokenId]];
