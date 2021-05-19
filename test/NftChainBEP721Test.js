@@ -39,7 +39,7 @@ describe("BEP721 contract", async () => {
       // create 1 ink for addr1
       const inkUrl = "inkurl";
       const inkPrice = ethers.utils.parseEther("1000");
-      console.log("PRICEEEEEEEEE", inkPrice);
+
       const createInk = await BEP721Token.connect(addr1).createInk(
         inkUrl,
         1,
