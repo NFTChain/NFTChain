@@ -26,6 +26,8 @@ contract NftChainBEP721 is ERC721, Ownable {
     {
         _setBaseURI("https://ipfs.io/ipfs/");
         currencyToken = _currencyTokenAddress;
+        setFeeTake(1);
+        setFeeAddress(msg.sender);
     }
 
     // events which are important for querying data with the graph
