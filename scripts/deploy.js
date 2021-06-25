@@ -11,7 +11,9 @@ const main = async () => {
 
   // deploy BEP20 Token
   const BEP20Contract = await ethers.getContractFactory("NftChainERC20");
-  const BEP20Token = await BEP20Contract.deploy(); // for buyer mints => [utils.id("T787872371871381237"), utils.id("12398129dhdö")]
+  const BEP20Token = await BEP20Contract.deploy(
+    "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff"
+  ); // https://polygonscan.com/address/0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff/contracts#code <=== mainnet
   console.log(`Token address: ${BEP20Token.address}`);
   const BEP20Data = {
     address: BEP20Token.address,
