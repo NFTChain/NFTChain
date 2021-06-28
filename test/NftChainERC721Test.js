@@ -10,10 +10,12 @@ describe("BEP721 contract", async () => {
     addr2;
 
   beforeEach(async () => {
-    BEP20Contract = await ethers.getContractFactory("NftChainBEP20");
-    BEP20Token = await BEP20Contract.deploy();
+    BEP20Contract = await ethers.getContractFactory("NftChainERC20");
+    BEP20Token = await BEP20Contract.deploy(
+      "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff"
+    );
 
-    BEP721Contract = await ethers.getContractFactory("NftChainBEP721");
+    BEP721Contract = await ethers.getContractFactory("NftChainERC721");
     BEP721Token = await BEP721Contract.deploy(BEP20Token.address);
     [owner, addr1, addr2, _] = await ethers.getSigners();
   });

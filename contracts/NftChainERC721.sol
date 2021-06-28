@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.6.0 <0.7.0;
+pragma solidity ^0.6.12;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "hardhat/console.sol";
 
-contract NftChainBEP721 is ERC721, Ownable {
+contract NftChainERC721 is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     Counters.Counter public totalInks;
@@ -186,8 +186,10 @@ contract NftChainBEP721 is ERC721, Ownable {
 
         uint256 _feeTake = feeTake.mul(_price).div(100);
         uint256 _sellerTake = _price.sub(_feeTake);
-        currencyToken.transferFrom(_buyer, feeAddress, _feeTake); // send BEP20 tokens as fee to dev address
-        currencyToken.transferFrom(_buyer, _seller, _sellerTake); // send BEP20 tokens to seller of the NFT
+        currencyToken.transferFrom(_buyer, _seller, _sellerTake); // send ERC20 tokens to seller of the NFT
+        if (_feeTake > 0) {
+            currencyToken.transferFrom(_buyer, feeAddress, _feeTake); // send ERC20 tokens as fee to dev address
+        }
 
         emit boughtInk(tokenId, inkUrl, _buyer, _price);
         return tokenId;
@@ -226,8 +228,10 @@ contract NftChainBEP721 is ERC721, Ownable {
 
         uint256 _feeTake = feeTake.mul(_price).div(100);
         uint256 _sellerTake = _price.sub(_feeTake);
-        currencyToken.transferFrom(_buyer, feeAddress, _feeTake); // send BEP20 tokens as fee to dev address
         currencyToken.transferFrom(_buyer, _seller, _sellerTake); // send BEP20 tokens to seller of the NFT
+        if (_feeTake > 0) {
+            currencyToken.transferFrom(_buyer, feeAddress, _feeTake); // send BEP20 tokens as fee to dev address
+        }
 
         Ink storage _ink = _inkById[_inkIdByTokenId[_tokenId]];
 
